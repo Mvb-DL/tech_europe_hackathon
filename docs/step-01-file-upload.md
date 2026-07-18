@@ -10,6 +10,7 @@ The upload layer stores source files for later fingerprinting, mapping, and enti
 4. Original bytes are written unchanged to local storage.
 5. A `manifest.json` stores dossier metadata and stable source-file identity.
 6. The workspace can reload metadata with `GET /api/dossiers/:dossierId`.
+7. The frontend pipeline can then hand accepted files to Step 2 without changing storage or upload code.
 
 ## Storage
 

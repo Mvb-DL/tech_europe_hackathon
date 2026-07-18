@@ -65,6 +65,15 @@ export function FileUploadPage() {
     const formData = new FormData();
     selectedFiles.forEach(({ file }) => formData.append("files", file));
     formData.append("name", "Audit dossier");
+    formData.append(
+      "metadata",
+      JSON.stringify(
+        selectedFiles.map(({ metadata }) => ({
+          filename: metadata.filename,
+          relativePath: metadata.filename,
+        })),
+      ),
+    );
 
     try {
       const response = await fetch("/api/dossiers", {
@@ -85,10 +94,11 @@ export function FileUploadPage() {
       const uploadedFiles = payload.dossier.files.map<UploadedFile>((file) => ({
         dossierId,
         extension: file.extension,
-        filename: file.originalName,
+        filename: file.relativePath ?? file.originalName,
         id: file.id,
         lastModified: Date.parse(file.uploadedAt),
         mimeType: file.mimeType,
+        relativePath: file.relativePath,
         size: file.sizeBytes,
       }));
       const rejectedMessage = payload.rejectedFiles.length > 0
@@ -160,7 +170,7 @@ export function FileUploadPage() {
           mimeType: file.type || "application/octet-stream",
           size: file.size,
           lastModified: file.lastModified,
-          relativePath: file.webkitRelativePath || undefined,
+          relativePath,
         },
       });
     }

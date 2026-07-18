@@ -10,7 +10,7 @@ T07 — Profile Layer is complete. T08 — Enrichment Layer is the next eligible
 
 This version includes a production-ready Step 01 upload foundation: source files are validated server-side, stored locally unchanged, hashed with SHA-256, and described in a persisted dossier manifest. Existing demo mapping, entity, sub-entity, and profile layers remain in the codebase, but the upload flow itself does not call OpenAI, fingerprint files, classify documents, or extract entities.
 
-Selecting files or a folder creates a persisted dossier and opens the Files workspace without starting Step 2. See [Step 01 File Upload](docs/step-01-file-upload.md) for the upload API, storage structure, limits, and Step 2/Step 3 readiness.
+Selecting files or a folder creates a persisted dossier, opens the Files workspace, and hands the accepted files to Step 2. See [Step 01 File Upload](docs/step-01-file-upload.md) for the upload API, storage structure, limits, and Step 2/Step 3 readiness.
 
 ## Technical Stack
 

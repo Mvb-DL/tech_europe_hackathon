@@ -23,6 +23,7 @@ const dossierSchema = z.object({
     dossierId: z.string().regex(/^[a-zA-Z0-9_-]+$/),
     originalName: z.string(),
     storedName: z.string(),
+    relativePath: z.string().optional(),
     extension: z.enum(["pdf", "csv", "txt", "xlsx", "xml", "docx"]),
     mimeType: z.string(),
     sizeBytes: z.number().nonnegative(),
@@ -34,7 +35,7 @@ const dossierSchema = z.object({
 });
 
 function storageRoot(config: DossierServerConfig) {
-  return resolve(/* turbopackIgnore: true */ process.cwd(), config.dossierStorageRoot);
+  return resolve(/*turbopackIgnore: true*/ process.cwd(), config.dossierStorageRoot);
 }
 
 function manifestPath(config: DossierServerConfig, dossierId: string) {

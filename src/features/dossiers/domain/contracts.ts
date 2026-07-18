@@ -22,6 +22,7 @@ export type SourceFile = {
   dossierId: string;
   originalName: string;
   storedName: string;
+  relativePath?: string;
   extension: SupportedFileExtension;
   mimeType: string;
   sizeBytes: number;

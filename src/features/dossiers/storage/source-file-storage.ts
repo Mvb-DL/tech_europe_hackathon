@@ -46,7 +46,7 @@ export function sanitizeFilename(value: string) {
 }
 
 function storageRoot(config: DossierServerConfig) {
-  return resolve(/* turbopackIgnore: true */ process.cwd(), config.dossierStorageRoot);
+  return resolve(/*turbopackIgnore: true*/ process.cwd(), config.dossierStorageRoot);
 }
 
 function dossierFilesDirectory(config: DossierServerConfig, dossierId: string) {

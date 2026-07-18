@@ -10,6 +10,7 @@ import { usePipelineRuntime } from "./pipeline-runtime-provider";
 type FileMappingControlsProps = {
   autoRun?: boolean;
   isVisible: boolean;
+  onCompleted?: () => void;
 };
 
 function delay(milliseconds: number) {
@@ -64,7 +65,7 @@ function createQueuedFileLayer(dossierId: string, files: UploadedFile[]): MapLay
   };
 }
 
-export function FileMappingControls({ autoRun = false, isVisible }: FileMappingControlsProps) {
+export function FileMappingControls({ autoRun = false, isVisible, onCompleted }: FileMappingControlsProps) {
   const { fileMappingEngine, graphLayoutEngine } = usePipelineRuntime();
   const uploadedFiles = usePipelineStore((state) => state.uploadedFiles);
   const dossierId = usePipelineStore((state) => state.dossierId);
@@ -153,6 +154,7 @@ export function FileMappingControls({ autoRun = false, isVisible }: FileMappingC
         }
 
         if (event.payload?.runStatus === "completed") {
+          onCompleted?.();
           return;
         }
 
@@ -207,6 +209,7 @@ export function FileMappingControls({ autoRun = false, isVisible }: FileMappingC
     resetStageRun,
     setProcessingQueue,
     setRunStatus,
+    onCompleted,
     uploadedFiles,
     upsertMapLayer,
     waitWhilePaused,

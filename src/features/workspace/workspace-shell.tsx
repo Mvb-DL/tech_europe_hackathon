@@ -3,7 +3,7 @@
 import { Activity, Check, Circle, FileStack, Info, Layers3 } from "lucide-react";
 import { LayoutGroup } from "motion/react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import type { Dossier } from "@/features/dossiers/domain/contracts";
@@ -215,6 +215,7 @@ function stageBadge(stage: WorkspaceStage, runStatus: string) {
 
 export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { dossierId } = useParams<{ dossierId: string }>();
   const activeStage = getStage(pathname);
   const workspaceBase = `/dossiers/${encodeURIComponent(dossierId)}/workspace`;
@@ -258,10 +259,11 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
       const files = dossier.files.map((file) => ({
         dossierId: dossier.id,
         extension: file.extension,
-        filename: file.originalName,
+        filename: file.relativePath ?? file.originalName,
         id: file.id,
         lastModified: Date.parse(file.uploadedAt),
         mimeType: file.mimeType,
+        relativePath: file.relativePath,
         size: file.sizeBytes,
       }));
 
@@ -451,8 +453,14 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
               )}
 
               <div className="px-4 pb-4">
-                <FileMappingControls isVisible={activeStage === "files"} />
-                <EntityExtractionControls isVisible={activeStage === "entities"} />
+                <FileMappingControls
+                  autoRun
+                  isVisible={activeStage === "files"}
+                  onCompleted={() => {
+                    router.push(`${workspaceBase}/entities`);
+                  }}
+                />
+                <EntityExtractionControls autoRun isVisible={activeStage === "entities"} />
                 <SubEntityControls isVisible={activeStage === "sub_entities"} />
                 <ProfileControls isVisible={activeStage === "profiles"} />
               </div>

@@ -7,6 +7,7 @@ import { usePipelineStore } from "@/lib/pipeline/store";
 import { usePipelineRuntime } from "./pipeline-runtime-provider";
 
 type EntityExtractionControlsProps = {
+  autoRun?: boolean;
   isVisible: boolean;
 };
 
@@ -17,6 +18,7 @@ function delay(milliseconds: number) {
 }
 
 export function EntityExtractionControls({
+  autoRun = false,
   isVisible,
 }: EntityExtractionControlsProps) {
   const { entityExtractionEngine, entityLayoutEngine } = usePipelineRuntime();
@@ -37,6 +39,7 @@ export function EntityExtractionControls({
   const upsertMapLayer = usePipelineStore((state) => state.upsertMapLayer);
   const runTokenRef = useRef(0);
   const resumeRef = useRef<(() => void) | null>(null);
+  const autoStartedRunRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -135,12 +138,31 @@ export function EntityExtractionControls({
     void runDemo();
   };
 
+  const autoRunKey = dossierId && fileLayer
+    ? `${dossierId}:${fileLayer.id}:${fileLayer.nodes.length}:${fileLayer.edges.length}`
+    : null;
+
+  useEffect(() => {
+    if (
+      !isVisible ||
+      !autoRun ||
+      !autoRunKey ||
+      !fileLayer?.nodes.some((node) => node.kind === "file_group" && node.id !== "file-group:agent-intake") ||
+      autoStartedRunRef.current === autoRunKey
+    ) {
+      return;
+    }
+
+    autoStartedRunRef.current = autoRunKey;
+    void runDemo();
+  });
+
   if (!isVisible) {
     return null;
   }
 
   const hasFileGroups = Boolean(
-    fileLayer?.nodes.some((node) => node.kind === "file_group"),
+    fileLayer?.nodes.some((node) => node.kind === "file_group" && node.id !== "file-group:agent-intake"),
   );
   const isPaused = runStatus === "paused";
   const isRunning = runStatus === "running";

@@ -8,6 +8,7 @@ import type { DossierServerConfig } from "../src/features/dossiers/config/server
 import { createFilesystemDossierRepository } from "../src/features/dossiers/repositories/dossier-repository";
 import { uploadDossier, type UploadableFile } from "../src/features/dossiers/services/dossier-upload-service";
 import { getSourceFile } from "../src/features/dossiers/services/source-file-service";
+import { mapDossier } from "../src/features/file-mapping/services/map-dossier";
 import { GET } from "../src/app/api/dossiers/[dossierId]/route";
 
 function testConfig(root: string, overrides: Partial<DossierServerConfig> = {}): DossierServerConfig {
@@ -32,7 +33,12 @@ async function withStorage<T>(
   }
 }
 
-function uploadable(name: string, contents: string, type = "application/octet-stream"): UploadableFile {
+function uploadable(
+  name: string,
+  contents: string,
+  type = "application/octet-stream",
+  metadata: Partial<Pick<UploadableFile, "originalName" | "relativePath">> = {},
+): UploadableFile {
   const bytes = new TextEncoder().encode(contents);
 
   return {
@@ -40,6 +46,7 @@ function uploadable(name: string, contents: string, type = "application/octet-st
       return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
     },
     name,
+    ...metadata,
     size: bytes.byteLength,
     type,
   };
@@ -83,6 +90,30 @@ test("uploads multiple supported file types with stable metadata, hashes, manife
     assert.match(firstFile.id, /^file-[a-f0-9-]+$/);
     assert.match(response.dossier.id, /^dossier-[a-f0-9-]+$/);
     assert.match(firstFile.sha256, /^[a-f0-9]{64}$/);
+  });
+});
+
+test("Step 2 mapping reads files from the production upload manifest", async () => {
+  await withStorage(async (root) => {
+    const previousRoot = process.env.DOSSIER_STORAGE_ROOT;
+    try {
+      process.env.DOSSIER_STORAGE_ROOT = root;
+      const response = await uploadDossier({
+        files: [
+          uploadable("Anlagen.txt", "ANY;CONTENT\n1;2", "text/plain", {
+            originalName: "AV/Anlagen.txt",
+            relativePath: "AV/Anlagen.txt",
+          }),
+        ],
+      }, { config: testConfig(root) });
+      const mapped = await mapDossier(response.dossier.id, null);
+
+      assert.equal(mapped.fileMap.summary.mappedFiles, 1);
+      assert.equal(mapped.fileMap.files[0].primaryDomain, "fixed_assets");
+      assert.equal(mapped.fileMap.files[0].fileId, response.acceptedFileIds[0]);
+    } finally {
+      process.env.DOSSIER_STORAGE_ROOT = previousRoot;
+    }
   });
 });
 

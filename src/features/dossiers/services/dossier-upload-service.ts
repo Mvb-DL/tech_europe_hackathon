@@ -9,6 +9,8 @@ import { createLocalSourceFileStorage, sanitizeFilename } from "../storage/sourc
 
 export type UploadableFile = {
   arrayBuffer(): Promise<ArrayBuffer>;
+  originalName?: string;
+  relativePath?: string;
   name: string;
   size: number;
   type?: string;
@@ -59,6 +61,14 @@ function sha256(bytes: Uint8Array) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
+function sanitizeRelativePath(value: string) {
+  return value
+    .split(/[\\/]+/)
+    .map((part) => sanitizeFilename(part))
+    .filter(Boolean)
+    .join("/");
+}
+
 function dossierStatus(acceptedCount: number, rejectedCount: number): Dossier["status"] {
   if (acceptedCount === 0) {
     return "failed";
@@ -99,7 +109,11 @@ export async function uploadDossier(
   let acceptedBytes = 0;
 
   for (const [index, file] of input.files.entries()) {
-    const originalName = sanitizeFilename(file.name || "unnamed-file");
+    const rawName = file.originalName || file.relativePath || file.name || "unnamed-file";
+    const originalName = sanitizeFilename(rawName);
+    const relativePath = file.relativePath
+      ? sanitizeRelativePath(file.relativePath)
+      : undefined;
 
     if (index >= config.maxFilesPerDossier) {
       reject(rejectedFiles, originalName, `Maximum file count is ${config.maxFilesPerDossier}.`);
@@ -155,6 +169,7 @@ export async function uploadDossier(
         id: fileId,
         mimeType: file.type || "application/octet-stream",
         originalName,
+        relativePath,
         sha256: digest,
         sizeBytes: bytes.byteLength,
         status: "stored",
