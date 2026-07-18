@@ -17,14 +17,14 @@ export type FileMappingResult = {
   secondaryDomains: PrimaryDomain[]; documentType: string; entityCandidates: string[];
   primaryKeyCandidates: string[]; joinKeyCandidates: string[]; reportingPeriods: string[];
   languages: string[]; confidence: number; method: FileMappingMethod; reasons: MappingReason[];
-  warnings: string[];
+  warnings: string[]; groupId?: string; groupLabel?: string; groupReason?: string;
 };
 export type FileConnection = {
   id: string; sourceFileId: string; targetFileId: string;
   relationship: "references" | "defines_schema_for" | "shares_key_with" | "reconciles_with" | "supports" | "candidate_connection";
   sharedFields: string[]; confidence: number; status: "confirmed" | "candidate"; reasons: MappingReason[];
 };
-export type FileMapGroup = { id: string; domain: PrimaryDomain; label: string; fileIds: string[] };
+export type FileMapGroup = { id: string; domain: PrimaryDomain | "custom"; label: string; fileIds: string[]; reason?: string };
 export type FileMap = {
   dossierId: string; createdAt: string; updatedAt: string; files: FileMappingResult[];
   groups: FileMapGroup[]; connections: FileConnection[];

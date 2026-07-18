@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Check, Circle, FileStack, Info, Layers3, MoreHorizontal } from "lucide-react";
+import { Activity, Check, Circle, FileStack, Info, Layers3 } from "lucide-react";
 import { LayoutGroup } from "motion/react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -43,20 +43,6 @@ const navStages: Array<{
 }> = [
   { label: "Upload", route: "/", stage: "upload" },
   ...stages,
-];
-
-const layerRailRows: Array<{
-  countLabel: string;
-  label: string;
-  route?: string;
-  stage: PipelineStage;
-}> = [
-  { countLabel: "9 modules", label: "Enrichment", route: "enrichment", stage: "enrichment" },
-  { countLabel: "5 cards", label: "Profiles", route: "profiles", stage: "profiles" },
-  { countLabel: "9 parts", label: "Sub-Entities", route: "sub-entities", stage: "sub_entities" },
-  { countLabel: "9 types", label: "Entities", route: "entities", stage: "entities" },
-  { countLabel: "7 groups", label: "Files", route: "files", stage: "files" },
-  { countLabel: "10", label: "Upload", stage: "upload" },
 ];
 
 function getStage(pathname: string): WorkspaceStage {
@@ -128,6 +114,58 @@ function readStringList(value: unknown) {
     : [];
 }
 
+function labelFromKey(key: string) {
+  return key
+    .replaceAll("_", " ")
+    .replaceAll(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/^./, (value) => value.toUpperCase());
+}
+
+function formatInspectorValue(value: unknown) {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    const primitives = value.filter(
+      (item) =>
+        typeof item === "string" ||
+        typeof item === "number" ||
+        typeof item === "boolean",
+    );
+
+    if (primitives.length === value.length) {
+      return primitives.join(", ");
+    }
+  }
+
+  return JSON.stringify(value);
+}
+
+function readInspectorData(data: Record<string, unknown> | undefined) {
+  if (!data) {
+    return [];
+  }
+
+  const hiddenKeys = new Set([
+    "layout",
+    "result",
+    "metrics",
+    "lineage",
+    "dataGaps",
+    "sourceCoverage",
+  ]);
+
+  return Object.entries(data)
+    .filter(([key, value]) => !hiddenKeys.has(key) && value !== undefined && value !== null)
+    .map(([key, value]) => ({
+      label: labelFromKey(key),
+      value: formatInspectorValue(value),
+    }))
+    .filter((entry) => entry.value && entry.value !== "[]")
+    .slice(0, 8);
+}
+
 function profileTagClass(provenance: ProfileMetric["provenance"]) {
   switch (provenance) {
     case "observed":
@@ -183,6 +221,7 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const events = usePipelineStore((state) => state.events);
   const mapLayers = usePipelineStore((state) => state.mapLayers);
   const processingQueue = usePipelineStore((state) => state.processingQueue);
+  const runStatus = usePipelineStore((state) => state.runStatus);
   const selectedNodeId = usePipelineStore((state) => state.selectedNodeId);
   const setActiveStage = usePipelineStore((state) => state.setActiveStage);
   const setSelectedNodeId = usePipelineStore((state) => state.setSelectedNodeId);
@@ -227,6 +266,7 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const selectedWarnings = Array.isArray(selectedResult?.warnings)
     ? selectedResult.warnings.filter((warning): warning is string => typeof warning === "string")
     : [];
+  const selectedInspectorData = readInspectorData(selectedNode?.data);
   const nodeCount =
     activeStage === "files"
       ? placedFileIds.size
@@ -255,7 +295,7 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
     <div className="min-h-screen bg-[#F7F6F2] text-[#1A2340]">
       <LayoutGroup id="file-map-playback">
         <div className="mx-auto grid min-h-[1024px] max-w-[1440px] grid-rows-[58px_minmax(0,1fr)_142px] overflow-hidden border-x border-[#E6E7EC] bg-[#F7F6F2] shadow-[0_24px_70px_rgba(26,35,64,0.08)]">
-          <header className="grid grid-cols-[252px_minmax(0,1fr)_284px] items-center border-b border-[#E6E7EC] bg-white px-5">
+          <header className="grid grid-cols-[252px_minmax(0,1fr)] items-center border-b border-[#E6E7EC] bg-white px-5">
             <div className="flex items-center gap-3">
               <div className="grid h-9 w-9 place-items-center rounded-md border border-[#2F63E6]/20 bg-[#EDF1FC] text-[#2F63E6]">
                 <Layers3 aria-hidden="true" size={18} />
@@ -319,59 +359,18 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
               </ol>
             </nav>
 
-            <div className="flex items-center justify-end gap-3">
-              <div className="min-w-0 text-right">
-                <p className="truncate text-xs font-semibold text-[#1A2340]">Mandant Ratio-Gruppe 2025</p>
-                <p className="text-[11px] font-medium text-[#5A6379]">10 files</p>
-              </div>
-              <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0] ${runStatus === "running" ? "bg-[#EDF1FC] text-[#2F63E6]" : "bg-[#E5F4F1] text-[#247567]"}`}>
-                {runStatus === "running" ? "Processing" : "Mapped"}
-              </span>
-              <button
-                aria-label="More dossier actions"
-                className="grid h-8 w-8 place-items-center rounded-md border border-[#E6E7EC] bg-white text-[#5A6379] hover:bg-[#F2F3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6]"
-                type="button"
-              >
-                <MoreHorizontal aria-hidden="true" size={17} />
-              </button>
-            </div>
           </header>
 
           <div className="grid min-h-0 grid-cols-[264px_minmax(0,1fr)_334px]">
             <aside className="min-h-0 overflow-y-auto border-r border-[#E6E7EC] bg-white">
-              <div className="border-b border-[#E6E7EC] px-4 py-4">
-                <p className="text-xs font-bold uppercase tracking-[0] text-[#5A6379]">Investigation layers</p>
-                <div className="mt-3 space-y-1">
-                  {layerRailRows.map((row) => {
-                    const isActive = row.stage === activeStage;
-                    const content = (
-                      <div className={`relative rounded-md border px-3 py-2.5 ${isActive ? "border-[#2F63E6]/25 bg-[#EDF1FC]" : "border-transparent hover:border-[#E6E7EC] hover:bg-[#F7F6F2]"}`}>
-                        {isActive ? <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r bg-[#2F63E6]" /> : null}
-                        <div className="flex items-center justify-between gap-2 pl-1">
-                          <span className={`text-sm font-semibold ${isActive ? "text-[#2F63E6]" : "text-[#1A2340]"}`}>{row.label}</span>
-                          <span className="text-[11px] font-medium text-[#5A6379]">{row.countLabel}</span>
-                        </div>
-                      </div>
-                    );
-
-                    return row.route ? (
-                      <Link href={`${workspaceBase}/${row.route}`} key={row.stage}>
-                        {content}
-                      </Link>
-                    ) : (
-                      <Link href="/" key={row.stage}>
-                        {content}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
               {activeStage === "files" ? (
                 <div>
                   <div className="flex h-12 items-center gap-2 border-b border-[#E6E7EC] px-4">
                     <FileStack aria-hidden="true" className="text-[#2F63E6]" size={16} />
-                    <h2 className="text-sm font-semibold">Processing buffer</h2>
+                    <div>
+                      <h2 className="text-sm font-semibold">Files for mapping</h2>
+                      <p className="text-[11px] text-[#5A6379]">Agent queue · grouped on the map</p>
+                    </div>
                   </div>
                   <FileMapProcessingBuffer
                     activeFileId={activeFile?.id}
@@ -471,8 +470,8 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
               <div className="flex h-[62px] items-center gap-2 border-b border-[#E6E7EC] px-4">
                 <Info aria-hidden="true" className="text-[#2F63E6]" size={16} />
                 <div>
-                  <h2 className="text-sm font-bold">Inspector</h2>
-                  <p className="text-[11px] text-[#5A6379]">Traceable selected object</p>
+                  <h2 className="text-sm font-bold">Audit Inspector</h2>
+                  <p className="text-[11px] text-[#5A6379]">Hover or click evidence</p>
                 </div>
               </div>
               <div className="p-4 text-sm">
@@ -486,6 +485,35 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
                     {selectedNode.sourceIds.length} source file
                     {selectedNode.sourceIds.length === 1 ? "" : "s"}
                   </p>
+                  {selectedNode.sourceIds.length > 0 ? (
+                    <div className="mt-4 rounded-md border border-[#E6E7EC] bg-white px-3 py-2 text-xs">
+                      <p className="font-bold text-[#1A2340]">Evidence sources</p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {selectedNode.sourceIds.slice(0, 8).map((sourceId) => (
+                          <span
+                            className="max-w-full truncate rounded-full border border-[#E6E7EC] bg-[#F7F6F2] px-2 py-0.5 text-[10px] font-semibold text-[#5A6379]"
+                            key={sourceId}
+                            title={sourceId}
+                          >
+                            {sourceId}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  {selectedInspectorData.length > 0 ? (
+                    <dl className="mt-3 space-y-2 text-xs text-[#5A6379]">
+                      {selectedInspectorData.map((entry) => (
+                        <div
+                          className="rounded-md border border-[#E6E7EC] bg-white px-3 py-2"
+                          key={entry.label}
+                        >
+                          <dt className="font-bold text-[#1A2340]">{entry.label}</dt>
+                          <dd className="mt-1 line-clamp-4 break-words">{entry.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
                   {selectedNode.kind === "profile" ? (
                     <div className="mt-5 space-y-5 text-xs text-[#5A6379]">
                       {selectedProfileCoverage !== undefined ? (
@@ -588,8 +616,8 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
               ) : (
                 <div className="rounded-lg border border-dashed border-[#E6E7EC] bg-[#F7F6F2] px-4 py-8 text-center">
                   <Circle aria-hidden="true" className="mx-auto text-[#98A0B0]" size={22} />
-                  <p className="mt-3 text-sm font-bold text-[#1A2340]">Select an item to inspect</p>
-                  <p className="mt-1 text-xs leading-5 text-[#5A6379]">Every selected fact keeps its source lineage visible here.</p>
+                  <p className="mt-3 text-sm font-bold text-[#1A2340]">Hover or click an item</p>
+                  <p className="mt-1 text-xs leading-5 text-[#5A6379]">Evidence, source lineage, and node data stay visible here.</p>
                 </div>
               )}
             </div>

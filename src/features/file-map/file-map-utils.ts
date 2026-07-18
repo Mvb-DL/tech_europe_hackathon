@@ -40,11 +40,11 @@ export function getFileMapStatus(
     return "failed";
   }
 
-  if (event.type.endsWith("file_placed")) {
+  if (event.type.endsWith("file_placed") || event.type.endsWith("file_assigned")) {
     return "placed";
   }
 
-  if (event.type.endsWith("file_classified")) {
+  if (event.type.endsWith("file_classified") || event.type.includes("classification")) {
     return "classified";
   }
 
@@ -54,7 +54,7 @@ export function getFileMapStatus(
 export function getPlacedFileIds(layer: MapLayer | undefined) {
   return new Set(
     layer?.nodes
-      .filter((node) => node.kind === "file")
+      .filter((node) => node.kind === "file" && node.parentId !== "file-group:agent-intake")
       .flatMap((node) => node.sourceIds) ?? [],
   );
 }

@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(_: Request, { params }: { params: Promise<{ dossierId: string }> }) {
-  try { const { dossierId } = await params; return NextResponse.json(await mapDossier(dossierId)); }
+  try { const { dossierId } = await params; return NextResponse.json(await mapDossier(dossierId, null)); }
   catch { return NextResponse.json({ error: "Mapping could not be completed." }, { status: 404 }); }
 }
 export async function GET(_: Request, { params }: { params: Promise<{ dossierId: string }> }) {

@@ -37,23 +37,23 @@ function SubEntityGroupNode({ data, selected }: NodeProps<SubEntityFlowNode>) {
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      className={`h-full w-full border bg-slate-50/90 ${
-        selected ? "border-emerald-700 ring-1 ring-emerald-700" : "border-slate-300"
+      className={`h-full w-full rounded-md border bg-[#F7F6F2] ${
+        selected ? "border-[#2F63E6] ring-2 ring-[#2F63E6]" : "border-[#E6E7EC]"
       }`}
       initial={shouldReduceMotion ? false : { opacity: 0 }}
       transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.24 }}
     >
       <Handle position={Position.Top} type="source" />
-      <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
+      <div className="flex items-center justify-between gap-2 border-b border-[#E6E7EC] bg-white px-3 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <Layers2 aria-hidden="true" className="text-emerald-700" size={16} />
-          <p className="truncate text-sm font-semibold text-slate-950">
+          <Layers2 aria-hidden="true" className="text-[#2F63E6]" size={16} />
+          <p className="truncate text-sm font-semibold text-[#1A2340]">
             {data.mapNode.title}
           </p>
         </div>
         <button
           aria-label={isCollapsed ? `Expand ${data.mapNode.title}` : `Collapse ${data.mapNode.title}`}
-          className="grid h-7 w-7 shrink-0 place-items-center text-slate-600 hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+          className="grid h-7 w-7 shrink-0 place-items-center rounded-md text-[#5A6379] hover:bg-[#F2F3F6] hover:text-[#1A2340] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6]"
           onClick={(event) => {
             event.stopPropagation();
             data.onToggle?.();
@@ -68,7 +68,7 @@ function SubEntityGroupNode({ data, selected }: NodeProps<SubEntityFlowNode>) {
           )}
         </button>
       </div>
-      <p className="px-3 pt-2 text-xs font-medium text-slate-500">
+      <p className="px-3 pt-2 text-xs font-medium text-[#5A6379]">
         {data.childCount ?? 0} demo components
       </p>
     </motion.div>
@@ -81,17 +81,17 @@ function SubEntityNode({ data, selected }: NodeProps<SubEntityFlowNode>) {
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
-      className={`h-full w-full border bg-white px-3 py-2 shadow-sm ${
-        selected ? "border-emerald-700 ring-1 ring-emerald-700" : "border-slate-300"
+      className={`h-full w-full rounded-md border bg-white px-3 py-2 shadow-sm ${
+        selected ? "border-[#2F63E6] ring-2 ring-[#2F63E6]" : "border-[#E6E7EC]"
       }`}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
       transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.22, ease: "easeOut" }}
     >
       <Handle position={Position.Top} type="target" />
-      <p className="truncate text-sm font-semibold text-slate-950">
+      <p className="truncate text-sm font-semibold text-[#1A2340]">
         {data.mapNode.title}
       </p>
-      <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-amber-800">
+      <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-[#B4780F]">
         Demo component
       </p>
     </motion.div>
@@ -164,7 +164,7 @@ export function SubEntityMapCanvas({ layer, onSelectNode }: SubEntityMapCanvasPr
         id: edge.id,
         label: edge.status,
         source: edge.source,
-        style: { stroke: "#64748b", strokeDasharray: "4 3", strokeWidth: 1.25 },
+        style: { stroke: "#5A6379", strokeDasharray: "4 3", strokeWidth: 1.25 },
         target: edge.target,
         type: "smoothstep",
       })),
@@ -211,7 +211,7 @@ export function SubEntityMapCanvas({ layer, onSelectNode }: SubEntityMapCanvasPr
   }, [flowInstance, groupCount, shouldReduceMotion]);
 
   return (
-    <div className="relative h-full border border-slate-300 bg-white">
+    <div className="relative h-full rounded-md border border-[#E6E7EC] bg-white">
       <ReactFlow<SubEntityFlowNode>
         edges={flowEdges}
         nodes={flowNodes}
@@ -219,6 +219,7 @@ export function SubEntityMapCanvas({ layer, onSelectNode }: SubEntityMapCanvasPr
         nodeTypes={nodeTypes}
         onInit={setFlowInstance}
         onNodeClick={(_, node) => onSelectNode(node.id)}
+        onNodeMouseEnter={(_, node) => onSelectNode(node.id)}
         onNodeDoubleClick={(_, node) => {
           if (node.type === "subEntityGroup") {
             toggleCollapsedNode(node.id);
@@ -229,15 +230,15 @@ export function SubEntityMapCanvas({ layer, onSelectNode }: SubEntityMapCanvasPr
         panOnScroll
         preventScrolling={false}
       >
-        <Background color="#cbd5e1" gap={24} size={1} />
+        <Background color="#E6E7EC" gap={24} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
 
       {flowNodes.length === 0 ? (
         <div className="pointer-events-none absolute inset-0 grid place-items-center p-6 text-center">
-          <div className="max-w-sm bg-white/90 p-5">
-            <p className="text-base font-semibold text-slate-950">Sub-entity map is empty</p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+          <div className="max-w-sm rounded-lg border border-[#E6E7EC] bg-white/95 p-5 shadow-[0_12px_30px_rgba(26,35,64,0.08)]">
+            <p className="text-base font-semibold text-[#1A2340]">Sub-entity map is empty</p>
+            <p className="mt-2 text-sm leading-6 text-[#5A6379]">
               Start the demo to expand entity candidates into traceable components.
             </p>
           </div>

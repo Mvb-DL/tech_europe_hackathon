@@ -104,10 +104,22 @@ export function FileUploadPage() {
       metadata: Omit<UploadedFile, "dossierId">;
     }> = [];
     const seenFiles = new Set<string>();
+    const relativePaths = candidates
+      .map((file) => file.webkitRelativePath || file.name)
+      .filter((name) => name.includes("/"));
+    const rootFolder = relativePaths[0]?.split("/")[0];
+    const shouldStripRootFolder = Boolean(
+      rootFolder &&
+        relativePaths.length > 0 &&
+        relativePaths.every((name) => name.startsWith(`${rootFolder}/`)),
+    );
 
     for (const file of candidates) {
       const extension = getFileExtension(file.name);
-      const relativePath = file.webkitRelativePath || file.name;
+      const browserRelativePath = file.webkitRelativePath || file.name;
+      const relativePath = shouldStripRootFolder
+        ? browserRelativePath.slice(String(rootFolder).length + 1)
+        : browserRelativePath;
       const key = `${relativePath}:${file.size}:${file.lastModified}`;
 
       if (
@@ -260,8 +272,19 @@ export function FileUploadPage() {
             <p className="mt-1 text-xs leading-5 text-[#5A6379]">
               Files are processed sequentially and stay linked to their source.
             </p>
-            <div className="mt-4 space-y-2">
-              {["Sachkontobuchungen.txt", "Lieferantenbuchungen.txt", "Kundenbuchungen.txt", "Berechtigungsauswertung_2025.xlsx"].map((name) => (
+            <div className="mt-4 max-h-[350px] space-y-2 overflow-y-auto pr-1">
+              {[
+                "Sachkontobuchungen.txt",
+                "Lieferantenbuchungen.txt",
+                "Kundenbuchungen.txt",
+                "Anlagen.txt",
+                "Anlagenbuchungen.txt",
+                "Berechtigungsauswertung_2025.xlsx",
+                "Jahresabschluss_2025.pdf",
+                "Freigabe-Log_2025.csv",
+                "Wareneingangsliste_2025.csv",
+                "Stammdatenaenderungen_2025.csv",
+              ].map((name) => (
                 <div className="flex items-center gap-2 rounded-md border border-[#E6E7EC] bg-[#F7F6F2] px-3 py-2" key={name}>
                   <FileText aria-hidden="true" className="shrink-0 text-[#5A6379]" size={14} />
                   <span className="min-w-0 truncate text-xs font-semibold text-[#1A2340]">{name}</span>

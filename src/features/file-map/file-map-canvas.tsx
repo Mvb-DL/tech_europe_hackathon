@@ -74,6 +74,18 @@ function FileCardNode({
   const fileId = mapNode.sourceIds[0];
   const shouldReduceMotion = useReducedMotion();
   const isActive = data.activeFileId === fileId;
+  const resultRecord =
+    typeof mapNode.data.result === "object" && mapNode.data.result !== null
+      ? mapNode.data.result
+      : undefined;
+  const statusLabel =
+    resultRecord && "method" in resultRecord
+      ? String(resultRecord.method)
+      : mapNode.status === "queued"
+        ? "Queued"
+        : mapNode.status === "processing"
+          ? "Mapping"
+          : "Placed";
 
   return (
     <motion.div
@@ -101,9 +113,7 @@ function FileCardNode({
         </p>
       </div>
       <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-[#3D9E8E]">
-        {typeof mapNode.data.result === "object" && mapNode.data.result !== null && "method" in mapNode.data.result
-          ? String(mapNode.data.result.method)
-          : "Placed"}
+        {statusLabel}
       </p>
     </motion.div>
   );
@@ -208,6 +218,7 @@ export function FileMapCanvas({
         nodeTypes={nodeTypes}
         onInit={setFlowInstance}
         onNodeClick={(_, node) => onSelectNode(node.id)}
+        onNodeMouseEnter={(_, node) => onSelectNode(node.id)}
         onPaneClick={() => onSelectNode(null)}
         panOnScroll
         preventScrolling={false}

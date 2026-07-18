@@ -146,11 +146,11 @@ export function EntityExtractionControls({
   const isRunning = runStatus === "running";
 
   return (
-    <div className="mt-5 border-t border-slate-200 pt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+    <div className="mt-5 border-t border-[#E6E7EC] pt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-[#5A6379]">
         Demo playback
       </p>
-      <p className="mt-2 text-sm text-slate-600">
+      <p className="mt-2 text-sm text-[#5A6379]">
         {isRunning
           ? "Entity demo is running."
           : isPaused
@@ -162,7 +162,7 @@ export function EntityExtractionControls({
       <div className="mt-3 flex flex-wrap gap-2">
         {isRunning ? (
           <button
-            className="inline-flex items-center gap-2 border border-slate-700 bg-white px-3 py-2 text-sm font-semibold text-slate-950 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+            className="inline-flex items-center gap-2 rounded-md border border-[#1A2340] bg-white px-3 py-2 text-sm font-semibold text-[#1A2340] hover:bg-[#F2F3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6]"
             onClick={() => setRunStatus("paused")}
             type="button"
           >
@@ -171,7 +171,7 @@ export function EntityExtractionControls({
           </button>
         ) : isPaused ? (
           <button
-            className="inline-flex items-center gap-2 border border-emerald-700 bg-emerald-700 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+            className="inline-flex items-center gap-2 rounded-md border border-[#2F63E6] bg-[#2F63E6] px-3 py-2 text-sm font-semibold text-white hover:bg-[#2452C7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6]"
             onClick={resumeRun}
             type="button"
           >
@@ -180,7 +180,7 @@ export function EntityExtractionControls({
           </button>
         ) : (
           <button
-            className="inline-flex items-center gap-2 border border-emerald-700 bg-emerald-700 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-200 disabled:text-slate-500"
+            className="inline-flex items-center gap-2 rounded-md border border-[#2F63E6] bg-[#2F63E6] px-3 py-2 text-sm font-semibold text-white hover:bg-[#2452C7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6] disabled:cursor-not-allowed disabled:border-[#E6E7EC] disabled:bg-[#F2F3F6] disabled:text-[#98A0B0]"
             disabled={!hasFileGroups}
             onClick={() => void runDemo()}
             type="button"
@@ -190,7 +190,7 @@ export function EntityExtractionControls({
           </button>
         )}
         <button
-          className="inline-flex items-center gap-2 border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:text-slate-400"
+          className="inline-flex items-center gap-2 rounded-md border border-[#E6E7EC] bg-white px-3 py-2 text-sm font-semibold text-[#5A6379] hover:bg-[#F2F3F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2F63E6] disabled:cursor-not-allowed disabled:text-[#98A0B0]"
           disabled={!hasFileGroups}
           onClick={restartRun}
           type="button"
@@ -199,10 +199,10 @@ export function EntityExtractionControls({
           Restart
         </button>
       </div>
-      <label className="mt-4 block text-sm font-semibold text-slate-700">
+      <label className="mt-4 block text-sm font-semibold text-[#5A6379]">
         Playback speed
         <select
-          className="mt-1 block w-full border border-slate-300 bg-white px-2 py-2 text-sm text-slate-950 focus:outline-2 focus:outline-offset-2 focus:outline-emerald-700"
+          className="mt-1 block w-full rounded-md border border-[#E6E7EC] bg-white px-2 py-2 text-sm text-[#1A2340] focus:outline-2 focus:outline-offset-2 focus:outline-[#2F63E6]"
           onChange={(event) => setPlaybackSpeed(Number(event.target.value))}
           value={playbackSpeed}
         >

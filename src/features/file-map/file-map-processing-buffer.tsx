@@ -96,11 +96,31 @@ export function FileMapProcessingBuffer({
     .map((fileId) => files.find((file) => file.id === fileId))
     .filter((file): file is UploadedFile => Boolean(file));
   const failedFiles = files.filter((file) => failedFileIds.has(file.id));
+  const taskText =
+    activeFile
+      ? `Mapping ${activeFile.filename}`
+      : queue.length > 0
+        ? "Waiting for classification results"
+        : files.length > 0
+          ? "All uploaded files assigned"
+          : "Waiting for uploaded files";
 
   return (
     <div className="p-4">
-      <p className="text-sm font-semibold text-[#1A2340]">
-        {queue.length === 1 ? "1 file in queue" : `${queue.length} files in queue`}
+      <section className="rounded-lg border border-[#2F63E6]/20 bg-[#EDF1FC] p-3">
+        <div className="flex items-start gap-3">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-[#2F63E6] text-white">
+            <FileText aria-hidden="true" size={15} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-[#1A2340]">File mapping agent</p>
+            <p className="mt-1 text-xs leading-5 text-[#2F63E6]">{taskText}</p>
+          </div>
+        </div>
+      </section>
+
+      <p className="mt-4 text-sm font-semibold text-[#1A2340]">
+        {queue.length === 1 ? "1 file remaining" : `${queue.length} files remaining`}
       </p>
 
       {activeFile ? (

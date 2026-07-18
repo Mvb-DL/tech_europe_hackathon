@@ -34,8 +34,8 @@ function EntityNode({ data, selected }: NodeProps<EntityFlowNode>) {
       animate={{ opacity: 1, scale: 1 }}
       className={`h-full w-full border bg-white p-3 shadow-sm ${
         selected
-          ? "border-emerald-700 ring-1 ring-emerald-700"
-          : "border-slate-300"
+          ? "border-[#2F63E6] ring-2 ring-[#2F63E6]"
+          : "border-[#E6E7EC]"
       }`}
       initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.92 }}
       transition={
@@ -47,16 +47,16 @@ function EntityNode({ data, selected }: NodeProps<EntityFlowNode>) {
       <Handle position={Position.Left} type="target" />
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <Boxes aria-hidden="true" className="text-emerald-700" size={16} />
-          <p className="truncate text-sm font-semibold text-slate-950">
+          <Boxes aria-hidden="true" className="text-[#2F63E6]" size={16} />
+          <p className="truncate text-sm font-semibold text-[#1A2340]">
             {mapNode.title}
           </p>
         </div>
-        <span className="shrink-0 border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+        <span className="shrink-0 rounded-full border border-[#B4780F]/30 bg-[#FBF2DE] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#8A5A08]">
           Candidate
         </span>
       </div>
-      <p className="mt-4 text-xs text-slate-600">
+      <p className="mt-4 text-xs text-[#5A6379]">
         {mapNode.sourceIds.length} source file
         {mapNode.sourceIds.length === 1 ? "" : "s"}
       </p>
@@ -99,7 +99,7 @@ export function EntityMapCanvas({ layer, onSelectNode }: EntityMapCanvasProps) {
         id: edge.id,
         label: edge.status,
         source: edge.source,
-        style: { stroke: "#b45309", strokeDasharray: "5 4", strokeWidth: 1.5 },
+        style: { stroke: "#B4780F", strokeDasharray: "5 4", strokeWidth: 1.5 },
         target: edge.target,
         type: "smoothstep",
       })) ?? [],
@@ -135,7 +135,7 @@ export function EntityMapCanvas({ layer, onSelectNode }: EntityMapCanvasProps) {
   }, [flowInstance, flowNodes.length, shouldReduceMotion]);
 
   return (
-    <div className="relative h-full border border-slate-300 bg-white">
+    <div className="relative h-full rounded-md border border-[#E6E7EC] bg-white">
       <ReactFlow
         edges={flowEdges}
         nodes={flowNodes}
@@ -143,21 +143,22 @@ export function EntityMapCanvas({ layer, onSelectNode }: EntityMapCanvasProps) {
         nodeTypes={nodeTypes}
         onInit={setFlowInstance}
         onNodeClick={(_, node) => onSelectNode(node.id)}
+        onNodeMouseEnter={(_, node) => onSelectNode(node.id)}
         onPaneClick={() => onSelectNode(null)}
         panOnScroll
         preventScrolling={false}
       >
-        <Background color="#cbd5e1" gap={24} size={1} />
+        <Background color="#E6E7EC" gap={24} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
 
       {flowNodes.length === 0 ? (
         <div className="pointer-events-none absolute inset-0 grid place-items-center p-6 text-center">
-          <div className="max-w-sm bg-white/90 p-5">
-            <p className="text-base font-semibold text-slate-950">
+          <div className="max-w-sm rounded-lg border border-[#E6E7EC] bg-white/95 p-5 shadow-[0_12px_30px_rgba(26,35,64,0.08)]">
+            <p className="text-base font-semibold text-[#1A2340]">
               Entity map is empty
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-[#5A6379]">
               Start the demo to create traceable entity candidates from mapped file groups.
             </p>
           </div>

@@ -74,20 +74,20 @@ function readGaps(node: MapNode) {
 function provenanceClasses(provenance: Provenance) {
   switch (provenance) {
     case "observed":
-      return "border-emerald-200 bg-emerald-50 text-emerald-800";
+      return "border-[#3D9E8E]/30 bg-[#E5F4F1] text-[#247567]";
     case "derived":
-      return "border-blue-200 bg-blue-50 text-blue-800";
+      return "border-[#2F63E6]/25 bg-[#EDF1FC] text-[#2F63E6]";
     case "inferred":
-      return "border-dashed border-amber-300 bg-amber-50 text-amber-800";
+      return "border-dashed border-[#B4780F]/40 bg-[#FBF2DE] text-[#8A5A08]";
   }
 }
 
 function statusClasses(status: MapNodeStatus) {
   if (status === "warning") {
-    return "border-amber-300 bg-amber-50 text-amber-800";
+    return "border-[#B4780F]/40 bg-[#FBF2DE] text-[#8A5A08]";
   }
 
-  return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  return "border-[#3D9E8E]/30 bg-[#E5F4F1] text-[#247567]";
 }
 
 function ProfileNode({ data, selected }: NodeProps<ProfileFlowNode>) {
@@ -101,28 +101,28 @@ function ProfileNode({ data, selected }: NodeProps<ProfileFlowNode>) {
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
-      className={`h-full w-full border bg-white p-3 shadow-sm ${
+      className={`h-full w-full rounded-md border bg-white p-3 shadow-sm ${
         selected
-          ? "border-blue-700 ring-2 ring-blue-700"
+          ? "border-[#2F63E6] ring-2 ring-[#2F63E6]"
           : hasGap
-            ? "border-amber-300"
-            : "border-slate-300"
+            ? "border-[#B4780F]/40"
+            : "border-[#E6E7EC]"
       }`}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
       transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.24, ease: "easeOut" }}
     >
       <Handle position={Position.Left} type="target" />
       <div className="flex items-start gap-2">
-        <div className="grid h-8 w-8 shrink-0 place-items-center border border-slate-300 bg-slate-50 text-slate-700">
+        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-[#E6E7EC] bg-[#F7F6F2] text-[#5A6379]">
           <UserRound aria-hidden="true" size={16} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="line-clamp-2 text-sm font-semibold leading-5 text-slate-950">
+          <p className="line-clamp-2 text-sm font-semibold leading-5 text-[#1A2340]">
             {mapNode.title}
           </p>
-          <p className="mt-0.5 truncate text-xs text-slate-600">{mapNode.subtitle}</p>
+          <p className="mt-0.5 truncate text-xs text-[#5A6379]">{mapNode.subtitle}</p>
           <span
-            className={`mt-1.5 inline-flex items-center gap-1 border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusClasses(mapNode.status)}`}
+            className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusClasses(mapNode.status)}`}
           >
             {hasGap ? (
               <FileWarning aria-hidden="true" size={11} />
@@ -136,12 +136,12 @@ function ProfileNode({ data, selected }: NodeProps<ProfileFlowNode>) {
 
       <div className="mt-3 grid grid-cols-2 gap-2">
         {metrics.map((metric) => (
-          <div key={`${metric.label}:${metric.value}`} className="min-w-0 border border-slate-200 bg-slate-50 px-2 py-1.5">
-            <p className="truncate text-[11px] font-medium text-slate-500">{metric.label}</p>
+          <div key={`${metric.label}:${metric.value}`} className="min-w-0 rounded-md border border-[#E6E7EC] bg-[#F7F6F2] px-2 py-1.5">
+            <p className="truncate text-[11px] font-medium text-[#5A6379]">{metric.label}</p>
             <div className="mt-1 flex items-center justify-between gap-1">
-              <p className="truncate text-xs font-semibold text-slate-950">{metric.value}</p>
+              <p className="truncate text-xs font-semibold text-[#1A2340]">{metric.value}</p>
               <span
-                className={`shrink-0 border px-1 py-0.5 text-[9px] font-bold uppercase ${provenanceClasses(metric.provenance)}`}
+                className={`shrink-0 rounded-full border px-1 py-0.5 text-[9px] font-bold uppercase ${provenanceClasses(metric.provenance)}`}
                 title={`${metric.provenance} from ${metric.sourceLabel}`}
               >
                 {metric.provenance.slice(0, 3)}
@@ -152,27 +152,27 @@ function ProfileNode({ data, selected }: NodeProps<ProfileFlowNode>) {
       </div>
 
       <div className="mt-3">
-        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
+        <div className="flex items-center justify-between text-[11px] font-semibold text-[#5A6379]">
           <span>Source coverage</span>
           <span>{coverage}%</span>
         </div>
-        <div className="mt-1 h-1.5 bg-slate-200">
+        <div className="mt-1 h-1.5 rounded-full bg-[#F2F3F6]">
           <div
-            className={coverage >= 95 ? "h-full bg-emerald-700" : "h-full bg-amber-700"}
+            className={`h-full rounded-full ${coverage >= 95 ? "bg-[#3D9E8E]" : "bg-[#B4780F]"}`}
             style={{ width: `${coverage}%` }}
           />
         </div>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-slate-500">
+      <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-[#5A6379]">
         <span>{mapNode.sourceIds.length} source files</span>
         {hasGap ? (
-          <span className="inline-flex items-center gap-1 text-amber-800">
+          <span className="inline-flex items-center gap-1 text-[#8A5A08]">
             <CircleDashed aria-hidden="true" size={12} />
             {gaps.length} gap{gaps.length === 1 ? "" : "s"}
           </span>
         ) : (
-          <span className="text-emerald-800">No open gaps</span>
+          <span className="text-[#247567]">No open gaps</span>
         )}
       </div>
       <Handle position={Position.Right} type="source" />
@@ -212,7 +212,7 @@ export function ProfileMapCanvas({ layer, onSelectNode }: ProfileMapCanvasProps)
         id: edge.id,
         label: edge.relation,
         source: edge.source,
-        style: { stroke: "#b45309", strokeDasharray: "5 5", strokeWidth: 1.4 },
+        style: { stroke: "#B4780F", strokeDasharray: "5 5", strokeWidth: 1.4 },
         target: edge.target,
         type: "smoothstep",
       })) ?? [],
@@ -247,7 +247,7 @@ export function ProfileMapCanvas({ layer, onSelectNode }: ProfileMapCanvasProps)
   }, [flowInstance, flowNodes.length, shouldReduceMotion]);
 
   return (
-    <div className="relative h-full border border-slate-300 bg-white">
+    <div className="relative h-full rounded-md border border-[#E6E7EC] bg-white">
       <ReactFlow
         edges={flowEdges}
         nodes={flowNodes}
@@ -255,21 +255,22 @@ export function ProfileMapCanvas({ layer, onSelectNode }: ProfileMapCanvasProps)
         nodeTypes={nodeTypes}
         onInit={setFlowInstance}
         onNodeClick={(_, node) => onSelectNode(node.id)}
+        onNodeMouseEnter={(_, node) => onSelectNode(node.id)}
         onPaneClick={() => onSelectNode(null)}
         panOnScroll
         preventScrolling={false}
       >
-        <Background color="#cbd5e1" gap={24} size={1} />
+        <Background color="#E6E7EC" gap={24} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
 
       {flowNodes.length === 0 ? (
         <div className="pointer-events-none absolute inset-0 grid place-items-center p-6 text-center">
-          <div className="max-w-sm bg-white/90 p-5">
-            <p className="text-base font-semibold text-slate-950">
+          <div className="max-w-sm rounded-lg border border-[#E6E7EC] bg-white/95 p-5 shadow-[0_12px_30px_rgba(26,35,64,0.08)]">
+            <p className="text-base font-semibold text-[#1A2340]">
               Profile map is empty
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-[#5A6379]">
               Start the demo to consolidate sub-entities into traceable business profiles.
             </p>
           </div>
