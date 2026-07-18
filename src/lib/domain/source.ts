@@ -1,5 +1,7 @@
+export type SourceId = string;
+
 export type SourceReference = {
-  fileId: string;
+  fileId: SourceId;
   filename: string;
   page?: number;
   row?: number;
