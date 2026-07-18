@@ -12,10 +12,15 @@
   "dependencies": {
     "@xyflow/react": "^12.11.2",
     "lucide-react": "^1.25.0",
+    "mammoth": "^1.12.0",
     "motion": "^12.42.2",
     "next": "^16.2.10",
+    "openai": "^6.48.0",
+    "pdf-parse": "^2.4.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

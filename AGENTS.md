@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-T06 — Sub-Entity Layer is complete. T07 — Profile Layer is the next eligible ticket.
+T07 — Profile Layer is complete. T08 — Enrichment Layer is the next eligible ticket.
 
 ## Ticket Workflow
 
@@ -25,6 +25,7 @@ T06 — Sub-Entity Layer is complete. T07 — Profile Layer is the next eligible
 - Use npm unless the repository is intentionally migrated later.
 - Do not add a separate backend, database, authentication, storage provider, AI API, graph database, or component library until the product needs it.
 - Keep public pipeline contracts in `src/lib/pipeline` and simulated logic in `src/demo`.
+- Keep file parsing, storage, and OpenAI access server-side. File mapping UI must use provider events, never parser or agent implementations directly.
 - UI code may consume pipeline contracts and store state, but must not import demo rules directly.
 - Inject demo engines through a runtime provider so future parsers, APIs, jobs, or agents can replace them without changing UI components.
 

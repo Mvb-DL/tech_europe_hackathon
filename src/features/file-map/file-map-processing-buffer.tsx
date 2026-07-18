@@ -35,10 +35,10 @@ function FileCard({ file, isActive = false, status }: FileCardProps) {
       }}
       className={`border bg-white p-3 shadow-sm ${
         isFailed
-          ? "border-rose-300"
+          ? "border-dashed border-[#B4780F]/45 bg-[#FBF2DE]"
           : isActive
-            ? "border-emerald-600 ring-1 ring-emerald-600"
-            : "border-slate-200"
+            ? "border-[#2F63E6] bg-[#EDF1FC] ring-1 ring-[#2F63E6]"
+            : "border-[#E6E7EC]"
       }`}
       exit={
         shouldReduceMotion
@@ -57,21 +57,21 @@ function FileCard({ file, isActive = false, status }: FileCardProps) {
       <div className="flex items-start gap-2">
         <FileText
           aria-hidden="true"
-          className={isFailed ? "text-rose-700" : "text-slate-600"}
+          className={isFailed ? "text-[#B4780F]" : isActive ? "text-[#2F63E6]" : "text-[#5A6379]"}
           size={16}
         />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-950">
+          <p className="truncate text-sm font-semibold text-[#1A2340]">
             {file.filename}
           </p>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-xs text-[#5A6379]">
             {file.extension.toUpperCase()} - {formatFileSize(file.size)}
           </p>
         </div>
       </div>
       <p
         className={`mt-3 text-xs font-semibold uppercase tracking-wide ${
-          isFailed ? "text-rose-700" : "text-slate-600"
+          isFailed ? "text-[#8A5A08]" : isActive ? "text-[#2F63E6]" : "text-[#5A6379]"
         }`}
       >
         {status}
@@ -99,14 +99,14 @@ export function FileMapProcessingBuffer({
 
   return (
     <div className="p-4">
-      <p className="text-sm font-semibold text-slate-950">
+      <p className="text-sm font-semibold text-[#1A2340]">
         {queue.length === 1 ? "1 file in queue" : `${queue.length} files in queue`}
       </p>
 
       {activeFile ? (
         <section aria-label="Active file" className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-            Active
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#2F63E6]">
+            Current file
           </p>
           <FileCard file={activeFile} isActive status={activeStatus} />
         </section>
@@ -114,8 +114,8 @@ export function FileMapProcessingBuffer({
 
       {queuedFiles.length > 0 ? (
         <section aria-label="Queued files" className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Queued
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#5A6379]">
+            Buffer stack
           </p>
           <AnimatePresence initial={false}>
             <div className="space-y-2">
@@ -129,8 +129,8 @@ export function FileMapProcessingBuffer({
 
       {failedFiles.length > 0 ? (
         <section aria-label="Failed files" className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-700">
-            Failed
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#8A5A08]">
+            Needs review
           </p>
           <div className="space-y-2">
             {failedFiles.map((file) => (

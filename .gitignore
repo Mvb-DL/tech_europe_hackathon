@@ -21,7 +21,13 @@ pnpm-debug.log*
 
 # env
 .env
+.env.local
 .env*.local
+.enve.example
+
+# local dossier storage
+/data/
+
 
 # typescript
 *.tsbuildinfo

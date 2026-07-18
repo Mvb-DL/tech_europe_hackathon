@@ -6,6 +6,7 @@ import {
   ReactFlow,
 } from "@xyflow/react";
 import type {
+  Edge,
   Node,
   NodeProps,
   NodeTypes,
@@ -45,24 +46,22 @@ function FileGroupNode({
 
   return (
     <div
-      className={`h-full w-full border bg-slate-50/90 ${
-        selected ? "border-emerald-700 ring-1 ring-emerald-700" : "border-slate-300"
+      className={`h-full w-full rounded-md border bg-[#F7F6F2] ${
+        selected ? "border-[#2F63E6] ring-2 ring-[#2F63E6]" : "border-[#E6E7EC]"
       }`}
     >
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-3 py-2">
+      <div className="flex items-center justify-between border-b border-[#E6E7EC] bg-white px-3 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <FolderTree aria-hidden="true" className="text-emerald-700" size={15} />
-          <p className="truncate text-sm font-semibold text-slate-950">
+          <FolderTree aria-hidden="true" className="text-[#3D9E8E]" size={15} />
+          <p className="truncate text-sm font-semibold text-[#1A2340]">
             {mapNode.title}
           </p>
         </div>
-        <span className="text-xs font-semibold text-slate-600">
+        <span className="rounded-full bg-[#E5F4F1] px-2 py-0.5 text-xs font-bold text-[#247567]">
           {getFileCount(mapNode)}
         </span>
       </div>
-      <p className="px-3 pt-2 text-xs font-medium text-slate-500">
-        Demo group
-      </p>
+      <p className="px-3 pt-2 text-xs font-medium text-[#5A6379]">Mapped group</p>
     </div>
   );
 }
@@ -84,8 +83,8 @@ function FileCardNode({
       }}
       className={`h-full w-full border bg-white px-3 py-2 shadow-sm ${
         selected
-          ? "border-emerald-700 ring-1 ring-emerald-700"
-          : "border-slate-300"
+          ? "border-[#2F63E6] ring-2 ring-[#2F63E6]"
+          : "border-[#E6E7EC]"
       }`}
       initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.94 }}
       layoutId={`file-card-${fileId}`}
@@ -96,13 +95,15 @@ function FileCardNode({
       }
     >
       <div className="flex items-start gap-2">
-        <FileText aria-hidden="true" className="mt-0.5 text-slate-600" size={15} />
-        <p className="line-clamp-2 text-xs font-semibold leading-4 text-slate-950">
+        <FileText aria-hidden="true" className="mt-0.5 text-[#5A6379]" size={15} />
+        <p className="line-clamp-2 text-xs font-semibold leading-4 text-[#1A2340]">
           {mapNode.title}
         </p>
       </div>
-      <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-emerald-700">
-        Placed
+      <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-[#3D9E8E]">
+        {typeof mapNode.data.result === "object" && mapNode.data.result !== null && "method" in mapNode.data.result
+          ? String(mapNode.data.result.method)
+          : "Placed"}
       </p>
     </motion.div>
   );
@@ -154,6 +155,18 @@ export function FileMapCanvas({
       layer?.nodes.map((node) => toFlowNode(node, activeFileId)) ?? [],
     [activeFileId, layer],
   );
+  const flowEdges = useMemo<Edge[]>(
+    () =>
+      layer?.edges.map((edge) => ({
+        id: edge.id,
+        label: edge.relation === "contains" ? undefined : edge.relation,
+        source: edge.source,
+        style: edge.relation === "contains" ? { stroke: "#98A0B0" } : { stroke: "#B4780F", strokeDasharray: "5 4" },
+        target: edge.target,
+        type: "smoothstep",
+      })) ?? [],
+    [layer],
+  );
   const fileCount = flowNodes.filter((node) => node.type === "fileCard").length;
   const groupCount = flowNodes.filter((node) => node.type === "fileGroup").length;
 
@@ -187,9 +200,9 @@ export function FileMapCanvas({
   }, [fileCount, flowInstance, groupCount, shouldReduceMotion]);
 
   return (
-    <div className="relative h-full border border-slate-300 bg-white">
+    <div className="relative h-full rounded-md border border-[#E6E7EC] bg-white">
       <ReactFlow
-        edges={[]}
+        edges={flowEdges}
         nodes={flowNodes}
         nodesConnectable={false}
         nodeTypes={nodeTypes}
@@ -199,17 +212,17 @@ export function FileMapCanvas({
         panOnScroll
         preventScrolling={false}
       >
-        <Background color="#cbd5e1" gap={24} size={1} />
+        <Background color="#E6E7EC" gap={24} size={1} />
         <Controls showInteractive={false} />
       </ReactFlow>
 
       {flowNodes.length === 0 ? (
         <div className="pointer-events-none absolute inset-0 grid place-items-center p-6 text-center">
-          <div className="max-w-sm bg-white/90 p-5">
-            <p className="text-base font-semibold text-slate-950">
+          <div className="max-w-sm rounded-lg border border-[#E6E7EC] bg-white/95 p-5 shadow-[0_12px_30px_rgba(26,35,64,0.08)]">
+            <p className="text-base font-semibold text-[#1A2340]">
               {emptyTitle} map is empty
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-sm leading-6 text-[#5A6379]">
               Start the demo to place uploaded files into traceable groups.
             </p>
           </div>

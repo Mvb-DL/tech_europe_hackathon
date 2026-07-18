@@ -4,8 +4,8 @@ import "./globals.css";
 import "@xyflow/react/dist/style.css";
 
 export const metadata: Metadata = {
-  title: "Tech Europe / Cortea Hackathon",
-  description: "Evidence-first audit investigation foundation.",
+  title: "Proofline",
+  description: "AI-assisted audit investigation workspace.",
 };
 
 export default function RootLayout({

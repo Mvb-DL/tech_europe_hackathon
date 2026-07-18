@@ -40,3 +40,9 @@ Demonstrate files leaving the processing stack and joining groups on the map one
 - Added stable grouped file-map layout, nested React Flow file nodes, source-aware inspector updates, activity events, and batch-based auto-fit.
 - Added layout-stability coverage alongside deterministic replay and lineage tests.
 - Verified with `npm test`, `npm run lint`, `npm run typecheck`, and `npm run build`.
+
+## Step 2 Real Mapping Update
+
+- Replaced the default file-map runtime with a server-backed upload, fingerprint, deterministic classification, connection discovery, persistence, and event-replay pipeline.
+- Kept the existing demo engine selectable with `NEXT_PUBLIC_FILE_MAPPING_PROVIDER=demo` for development.
+- Added an optional, strictly validated server-only OpenAI fallback using compact fingerprints and `store: false`; rules-only mapping remains available without a key.

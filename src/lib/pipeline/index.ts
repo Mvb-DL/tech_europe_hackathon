@@ -20,6 +20,7 @@ export type {
   SubEntityEngine,
 } from "./engines";
 export type { GraphLayoutEngine } from "./layout";
+export type { FileConnection, FileFingerprint, FileMap, FileMapGroup, FileMappingEvent, FileMappingMethod, FileMappingResult, MappingReason } from "@/features/file-mapping/domain/contracts";
 export { readMapNodeLayout } from "./layout";
 export { usePipelineStore } from "./store";
 export type {
