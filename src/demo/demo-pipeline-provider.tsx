@@ -7,6 +7,8 @@ import { DemoEntityExtractionEngine } from "./engines/demo-entity-extraction-eng
 import { DemoEntityLayoutEngine } from "./engines/demo-entity-layout-engine";
 import { DemoFileMapLayoutEngine } from "./engines/demo-file-map-layout-engine";
 import { DemoFileMappingEngine } from "./engines/demo-file-mapping-engine";
+import { DemoSubEntityEngine } from "./engines/demo-sub-entity-engine";
+import { DemoSubEntityLayoutEngine } from "./engines/demo-sub-entity-layout-engine";
 
 type DemoPipelineProviderProps = {
   children: ReactNode;
@@ -22,6 +24,11 @@ export function DemoPipelineProvider({
   const entityLayoutEngine = useMemo(() => new DemoEntityLayoutEngine(), []);
   const fileMappingEngine = useMemo(() => new DemoFileMappingEngine(), []);
   const graphLayoutEngine = useMemo(() => new DemoFileMapLayoutEngine(), []);
+  const subEntityEngine = useMemo(() => new DemoSubEntityEngine(), []);
+  const subEntityLayoutEngine = useMemo(
+    () => new DemoSubEntityLayoutEngine(),
+    [],
+  );
 
   return (
     <PipelineRuntimeProvider
@@ -29,6 +36,8 @@ export function DemoPipelineProvider({
       entityLayoutEngine={entityLayoutEngine}
       fileMappingEngine={fileMappingEngine}
       graphLayoutEngine={graphLayoutEngine}
+      subEntityEngine={subEntityEngine}
+      subEntityLayoutEngine={subEntityLayoutEngine}
     >
       {children}
     </PipelineRuntimeProvider>

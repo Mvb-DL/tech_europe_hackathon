@@ -6,9 +6,11 @@ The product will help auditors move from source files to traceable facts, entiti
 
 ## Current Status
 
-T05 — Entity Layer is complete. T06 — Sub-Entity Layer is the next eligible ticket.
+T06 — Sub-Entity Layer is complete. T07 — Profile Layer is the next eligible ticket.
 
-This version supports browser-local file selection, deterministic file mapping based only on filenames and extensions, and generic entity candidates derived from the resulting demo file groups. It does not implement file persistence, document parsing, real classification, real entity extraction, profiles, paths, evidence analysis, or fraud detection.
+This version supports browser-local file selection, deterministic file mapping based only on filenames and extensions, generic entity candidates derived from demo file groups, and generic nested components derived from those candidates. It does not implement file persistence, document parsing, real classification, real entity extraction, transaction matching, profiles, paths, evidence analysis, or fraud detection.
+
+Selecting files or a folder starts the File Map stage automatically. Later stages remain available only through explicit user navigation and their own controls.
 
 ## Technical Stack
 
@@ -58,10 +60,11 @@ No environment variables are required yet.
 - Deterministic demo file-mapping events, playback controls, and central event reduction
 - Animated file buffer and grouped React Flow map with stable demo layout
 - Deterministic entity-candidate events, stable entity map layout, candidate relationship labels, and trace-back to source file groups
+- Nested, collapsible sub-entity groups with stable parent-child layout and trace-back to parent entities
 - Isolated demo-adapter folders for later tickets
 - Simple multi-file upload page that stores metadata and opens the Files workspace
 - Ticket workflow under `codex/`
 
 ## Next Step
 
-Implement T06 — Sub-Entity Layer. Follow the first eligible `TODO` ticket in `codex/STATUS.md`.
+Implement T07 — Profile Layer. Follow the first eligible `TODO` ticket in `codex/STATUS.md`.

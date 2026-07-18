@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import type {
   EntityExtractionEngine,
   FileMappingEngine,
+  SubEntityEngine,
 } from "@/lib/pipeline/engines";
 import type { GraphLayoutEngine } from "@/lib/pipeline/layout";
 
@@ -13,6 +14,8 @@ type PipelineRuntime = {
   entityLayoutEngine: GraphLayoutEngine;
   fileMappingEngine: FileMappingEngine;
   graphLayoutEngine: GraphLayoutEngine;
+  subEntityEngine: SubEntityEngine;
+  subEntityLayoutEngine: GraphLayoutEngine;
 };
 
 const PipelineRuntimeContext = createContext<PipelineRuntime | null>(null);
@@ -27,6 +30,8 @@ export function PipelineRuntimeProvider({
   entityLayoutEngine,
   fileMappingEngine,
   graphLayoutEngine,
+  subEntityEngine,
+  subEntityLayoutEngine,
 }: PipelineRuntimeProviderProps) {
   return (
     <PipelineRuntimeContext.Provider
@@ -35,6 +40,8 @@ export function PipelineRuntimeProvider({
         entityLayoutEngine,
         fileMappingEngine,
         graphLayoutEngine,
+        subEntityEngine,
+        subEntityLayoutEngine,
       }}
     >
       {children}

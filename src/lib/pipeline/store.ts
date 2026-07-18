@@ -19,6 +19,7 @@ export type PipelineStoreState = {
   runStatus: PipelineRunStatus;
   activeStage: PipelineStage;
   selectedNodeId: string | null;
+  collapsedNodeIds: string[];
   playbackSpeed: number;
 };
 
@@ -32,6 +33,7 @@ export type PipelineStoreActions = {
   setRunStatus: (runStatus: PipelineRunStatus) => void;
   setActiveStage: (activeStage: PipelineStage) => void;
   setSelectedNodeId: (selectedNodeId: string | null) => void;
+  toggleCollapsedNode: (nodeId: string) => void;
   setPlaybackSpeed: (playbackSpeed: number) => void;
   resetPipelineRun: () => void;
   resetStageRun: (stage: PipelineStage) => void;
@@ -49,6 +51,7 @@ const createInitialPipelineState = (): PipelineStoreState => ({
   runStatus: "idle",
   activeStage: "upload",
   selectedNodeId: null,
+  collapsedNodeIds: [],
   playbackSpeed: 1,
 });
 
@@ -67,6 +70,12 @@ export const usePipelineStore = create<PipelineStore>()((set) => ({
   setRunStatus: (runStatus) => set({ runStatus }),
   setActiveStage: (activeStage) => set({ activeStage }),
   setSelectedNodeId: (selectedNodeId) => set({ selectedNodeId }),
+  toggleCollapsedNode: (nodeId) =>
+    set((state) => ({
+      collapsedNodeIds: state.collapsedNodeIds.includes(nodeId)
+        ? state.collapsedNodeIds.filter((currentNodeId) => currentNodeId !== nodeId)
+        : [...state.collapsedNodeIds, nodeId],
+    })),
   setPlaybackSpeed: (playbackSpeed) => set({ playbackSpeed }),
   resetPipelineRun: () =>
     set({
@@ -75,6 +84,7 @@ export const usePipelineStore = create<PipelineStore>()((set) => ({
       mapLayers: [],
       runStatus: "idle",
       selectedNodeId: null,
+      collapsedNodeIds: [],
     }),
   resetStageRun: (stage) =>
     set((state) => ({
@@ -82,6 +92,7 @@ export const usePipelineStore = create<PipelineStore>()((set) => ({
       mapLayers: state.mapLayers.filter((layer) => layer.stage !== stage),
       runStatus: "idle",
       selectedNodeId: null,
+      collapsedNodeIds: [],
     })),
   reset: () => set(createInitialPipelineState()),
 }));

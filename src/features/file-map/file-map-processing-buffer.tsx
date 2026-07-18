@@ -13,7 +13,6 @@ type FileMapProcessingBufferProps = {
   activeStatus: FileMapStatus;
   failedFileIds: Set<string>;
   files: UploadedFile[];
-  placedFileIds: Set<string>;
   queue: string[];
 };
 
@@ -86,7 +85,6 @@ export function FileMapProcessingBuffer({
   activeStatus,
   failedFileIds,
   files,
-  placedFileIds,
   queue,
 }: FileMapProcessingBufferProps) {
   const activeFile =
@@ -103,13 +101,6 @@ export function FileMapProcessingBuffer({
     <div className="p-4">
       <p className="text-sm font-semibold text-slate-950">
         {queue.length === 1 ? "1 file in queue" : `${queue.length} files in queue`}
-      </p>
-      <p className="mt-2 text-sm leading-6 text-slate-600">
-        {files.length === 0
-          ? "No files are loaded for this dossier yet."
-          : placedFileIds.size === files.length
-            ? "All selected files are placed on the map."
-            : "Files move through the demo one at a time."}
       </p>
 
       {activeFile ? (

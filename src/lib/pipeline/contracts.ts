@@ -37,6 +37,7 @@ export type UploadedFile = {
   id: SourceId;
   dossierId: string;
   filename: string;
+  relativePath?: string;
   extension: string;
   mimeType: string;
   size: number;

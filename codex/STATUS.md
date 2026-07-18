@@ -10,7 +10,7 @@ Allowed states: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 | T03 Demo pipeline and event stream | DONE | Leo | T00, T01 |
 | T04 Animated file map | DONE | Mario + Leo | T02, T03 |
 | T05 Entity layer | DONE | Leo + Mario | T04 |
-| T06 Sub-entity layer | TODO | Leo + Mario | T05 |
+| T06 Sub-entity layer | DONE | Leo + Mario | T05 |
 | T07 Profile layer | TODO | Leo + Mario | T06 |
 | T08 Enrichment layer | TODO | Leo + Mario | T07 |
 | T09 Transparency and lineage | TODO | Robin + Mario | T04–T08 |

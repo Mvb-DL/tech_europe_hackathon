@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-T05 — Entity Layer is complete. T06 — Sub-Entity Layer is the next eligible ticket.
+T06 — Sub-Entity Layer is complete. T07 — Profile Layer is the next eligible ticket.
 
 ## Ticket Workflow
 
