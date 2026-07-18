@@ -4,6 +4,7 @@ import { FileText, FolderUp, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
+import type { UploadDossierResponse } from "@/features/dossiers/domain/contracts";
 import type { UploadedFile } from "@/lib/pipeline/contracts";
 import { usePipelineStore } from "@/lib/pipeline/store";
 
@@ -61,33 +62,52 @@ export function FileUploadPage() {
   const startFileMap = async (
     selectedFiles: Array<{ file: File; metadata: Omit<UploadedFile, "dossierId"> }>,
   ) => {
-    const dossierId = createIdentifier("dossier");
     const formData = new FormData();
     selectedFiles.forEach(({ file }) => formData.append("files", file));
-    formData.append(
-      "metadata",
-      JSON.stringify(selectedFiles.map(({ metadata }) => metadata)),
-    );
+    formData.append("name", "Audit dossier");
 
     try {
-      const response = await fetch(`/api/dossiers/${dossierId}/files`, {
+      const response = await fetch("/api/dossiers", {
         body: formData,
         method: "POST",
       });
-      const payload = (await response.json()) as { files?: UploadedFile[] };
+      const payload = (await response.json()) as UploadDossierResponse | { error?: string };
 
-      if (!response.ok || !payload.files?.length) {
-        throw new Error("Upload failed");
+      if (!("dossier" in payload) || payload.acceptedFileIds.length === 0) {
+        const reasons = "rejectedFiles" in payload
+          ? payload.rejectedFiles.map((file) => `${file.originalName}: ${file.reason}`).join(" ")
+          : payload.error;
+
+        throw new Error(reasons || "Upload failed");
+      }
+
+      const dossierId = payload.dossier.id;
+      const uploadedFiles = payload.dossier.files.map<UploadedFile>((file) => ({
+        dossierId,
+        extension: file.extension,
+        filename: file.originalName,
+        id: file.id,
+        lastModified: Date.parse(file.uploadedAt),
+        mimeType: file.mimeType,
+        size: file.sizeBytes,
+      }));
+      const rejectedMessage = payload.rejectedFiles.length > 0
+        ? payload.rejectedFiles.map((file) => `${file.originalName}: ${file.reason}`).join(" ")
+        : null;
+
+      if (rejectedMessage) {
+        setValidationMessage(rejectedMessage);
+        await new Promise((resolve) => window.setTimeout(resolve, 900));
       }
 
       resetPipelineRun();
       setDossierId(dossierId);
-      setUploadedFiles(payload.files);
-      setProcessingQueue(payload.files.map((file) => file.id));
+      setUploadedFiles(uploadedFiles);
+      setProcessingQueue(uploadedFiles.map((file) => file.id));
       setActiveStage("files");
       router.push(`/dossiers/${dossierId}/workspace/files`);
-    } catch {
-      setValidationMessage("Files could not be prepared.");
+    } catch (error) {
+      setValidationMessage(error instanceof Error ? error.message : "Files could not be prepared.");
     }
   };
 

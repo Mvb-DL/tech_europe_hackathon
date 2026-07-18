@@ -8,6 +8,7 @@ import { usePipelineStore } from "@/lib/pipeline/store";
 import { usePipelineRuntime } from "./pipeline-runtime-provider";
 
 type FileMappingControlsProps = {
+  autoRun?: boolean;
   isVisible: boolean;
 };
 
@@ -63,7 +64,7 @@ function createQueuedFileLayer(dossierId: string, files: UploadedFile[]): MapLay
   };
 }
 
-export function FileMappingControls({ isVisible }: FileMappingControlsProps) {
+export function FileMappingControls({ autoRun = false, isVisible }: FileMappingControlsProps) {
   const { fileMappingEngine, graphLayoutEngine } = usePipelineRuntime();
   const uploadedFiles = usePipelineStore((state) => state.uploadedFiles);
   const dossierId = usePipelineStore((state) => state.dossierId);
@@ -218,6 +219,7 @@ export function FileMappingControls({ isVisible }: FileMappingControlsProps) {
   useEffect(() => {
     if (
       !isVisible ||
+      !autoRun ||
       !autoRunKey ||
       uploadedFiles.length === 0 ||
       autoStartedRunRef.current === autoRunKey
@@ -227,7 +229,7 @@ export function FileMappingControls({ isVisible }: FileMappingControlsProps) {
 
     autoStartedRunRef.current = autoRunKey;
     void runDemo();
-  }, [autoRunKey, isVisible, runDemo, runStatus, uploadedFiles.length]);
+  }, [autoRun, autoRunKey, isVisible, runDemo, runStatus, uploadedFiles.length]);
 
   if (!isVisible || runStatus !== "failed") {
     return null;

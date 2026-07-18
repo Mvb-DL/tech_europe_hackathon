@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-T07 — Profile Layer is complete. T08 — Enrichment Layer is the next eligible ticket.
+Step 01 — production-ready File Upload foundation is complete. Step 02 — File Fingerprinting and Agent-assisted Mapping is the next upload-dependent layer.
 
 ## Ticket Workflow
 
@@ -35,5 +35,6 @@ T07 — Profile Layer is complete. T08 — Enrichment Layer is the next eligible
 - Preserve source IDs and lineage on generated objects.
 - Do not parse documents inside React components or call external AI or enrichment services.
 - Do not present simulated content as proven evidence.
-- Keep upload data client-side until a future ticket explicitly adds a persistence boundary.
+- Keep file parsing, mapping, entity extraction, OpenAI calls, and enrichment out of the upload layer.
+- Uploaded source files may be persisted only through the Step 01 server-side dossier storage boundary.
 - Keep changes small, working, documented, and covered by lint, typecheck, and build checks.

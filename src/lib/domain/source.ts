@@ -2,7 +2,10 @@ export type SourceId = string;
 
 export type SourceReference = {
   fileId: SourceId;
+  dossierId?: string;
   filename: string;
+  sha256?: string;
+  sheet?: string;
   page?: number;
   row?: number;
   column?: string;

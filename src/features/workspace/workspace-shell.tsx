@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
+import type { Dossier } from "@/features/dossiers/domain/contracts";
 import { EntityMapCanvas } from "@/features/entity-map/entity-map-canvas";
 import { FileMapCanvas } from "@/features/file-map/file-map-canvas";
 import { FileMapProcessingBuffer } from "@/features/file-map/file-map-processing-buffer";
@@ -224,11 +225,57 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
   const runStatus = usePipelineStore((state) => state.runStatus);
   const selectedNodeId = usePipelineStore((state) => state.selectedNodeId);
   const setActiveStage = usePipelineStore((state) => state.setActiveStage);
+  const setDossierId = usePipelineStore((state) => state.setDossierId);
+  const setProcessingQueue = usePipelineStore((state) => state.setProcessingQueue);
   const setSelectedNodeId = usePipelineStore((state) => state.setSelectedNodeId);
+  const setUploadedFiles = usePipelineStore((state) => state.setUploadedFiles);
 
   useEffect(() => {
     setActiveStage(activeStage);
   }, [activeStage, setActiveStage]);
+
+  useEffect(() => {
+    if (!dossierId || uploadedFiles.length > 0) {
+      return;
+    }
+
+    let isMounted = true;
+
+    async function loadDossier() {
+      const response = await fetch(`/api/dossiers/${encodeURIComponent(dossierId)}`);
+
+      if (!response.ok) {
+        return;
+      }
+
+      const payload = (await response.json()) as { dossier?: Dossier };
+      const dossier = payload.dossier;
+
+      if (!isMounted || !dossier) {
+        return;
+      }
+
+      const files = dossier.files.map((file) => ({
+        dossierId: dossier.id,
+        extension: file.extension,
+        filename: file.originalName,
+        id: file.id,
+        lastModified: Date.parse(file.uploadedAt),
+        mimeType: file.mimeType,
+        size: file.sizeBytes,
+      }));
+
+      setDossierId(dossier.id);
+      setUploadedFiles(files);
+      setProcessingQueue(files.map((file) => file.id));
+    }
+
+    void loadDossier();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dossierId, setDossierId, setProcessingQueue, setUploadedFiles, uploadedFiles.length]);
 
   const fileLayer = useMemo(
     () => mapLayers.find((layer) => layer.stage === "files"),
